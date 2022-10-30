@@ -1,30 +1,41 @@
 package main
 
 import (
-	"context"
+	"fmt"
 	pb "grpcServer/datafiles"
 	"log"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
 const (
-	port = ":50051"
+	port      = ":50051"
+	noOfSteps = 3
 )
 
 type server struct {
 	pb.UnimplementedMoneyTransactionServer
 }
 
-func (s *server) MakeTransaction(ctx context.Context, in *pb.TransactionRequest) (*pb.TransactionResponse, error) {
+func (s *server) MakeTransaction(in *pb.TransactionRequest, stream pb.MoneyTransaction_MakeTransactionServer) error {
 	log.Printf("Got request for money Transfer...")
 	log.Printf("Amount: %f, from A/c:%s, to A/c:%s", in.Amount, in.From, in.To)
 
-	return &pb.TransactionResponse{
-		Confirmation: true,
-	}, nil
+	for i := 0; i < noOfSteps; i++ {
+		time.Sleep(time.Second * 3)
+		if err := stream.Send(&pb.TransactionResponse{
+			Status:      "good",
+			Step:        int32(i),
+			Description: fmt.Sprintf("Description of step %d", int32(i)),
+		}); err != nil {
+			log.Fatalf("%v.Send(%v) = %v", stream, "status", err)
+		}
+	}
+	log.Printf("Successfully transfered amount %v from %v to %v", in.Amount, in.From, in.To)
+	return nil
 }
 
 func main() {
