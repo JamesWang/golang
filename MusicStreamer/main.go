@@ -1,10 +1,10 @@
 package main
 
 import (
-	. "MusicStreamer/tracks"
-	"fmt"
+	. "MusicStreamer/jokebox"
 )
 
 func main() {
-	fmt.Printf("%v", MusicTracks.Tracks)
+	//fmt.Printf("%v", MusicTracks.Tracks)
+	StartServer(HOST, PORT)
 }

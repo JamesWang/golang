@@ -16,6 +16,11 @@ const (
 	Schedule MusicCommand = "/schedule"
 )
 
+type MusicCommandInfo struct {
+	Command MusicCommand
+	Data    []string
+}
+
 const (
 	HOST = "0.0.0.0"
 	PORT = "10255"
