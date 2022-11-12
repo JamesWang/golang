@@ -1,9 +1,11 @@
 package jokebox
 
 import (
+	. "MusicStreamer/tracks"
 	"bufio"
 	"fmt"
 	"net"
+	"path/filepath"
 	"strings"
 )
 
@@ -19,12 +21,12 @@ func StartServer(host string, port string) {
 	go HandleCommands()
 
 	for {
-		csocket, err := listener.Accept()
+		conn, err := listener.Accept()
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		go handleConnection(csocket)
+		go handleConnection(bufio.NewReader(conn), bufio.NewWriter(conn))
 		count++
 	}
 }
@@ -32,9 +34,9 @@ func StartServer(host string, port string) {
 var commandChannel = make(chan MusicCommandInfo)
 var cmdRespChannel = make(chan []string)
 
-func handleConnection(csocket net.Conn) {
+func handleConnection(reqReader *bufio.Reader, respWriter *bufio.Writer) {
 	for {
-		netData, err := bufio.NewReader(csocket).ReadString('\n')
+		netData, err := reqReader.ReadString('\n')
 		if err != nil {
 			fmt.Println(err)
 			return
@@ -44,39 +46,38 @@ func handleConnection(csocket net.Conn) {
 		if command == "/quit" {
 			break
 		}
-		handleCommand(csocket, command)
+		handleCommand(respWriter, command)
+		respWriter.Flush()
 	}
 }
 
-func handleCommand(csocket net.Conn, command string) {
+func handleCommand(respWriter *bufio.Writer, command string) {
 	fmt.Println("inside handleCommand")
 	switch command {
 	case "/list":
 		commandChannel <- MusicCommandInfo{Command: List}
 		resp := <-cmdRespChannel
 		fmt.Printf("received music: %v", resp)
-		writer := bufio.NewWriter(csocket)
-		writer.WriteString(strings.Join(resp, "\n"))
-		writer.Flush()
+		respWriter.WriteString(strings.Join(resp, "\n"))
 	case "/play":
 		commandChannel <- MusicCommandInfo{Command: Play}
 	case "/pause":
 		commandChannel <- MusicCommandInfo{Command: Pause}
 	default:
 		if strings.HasPrefix(command, string(Schedule)) {
-			scheduleMusic(csocket, command)
+			scheduleMusic(respWriter, command)
 		} else {
-			writer := bufio.NewWriter(csocket)
-			writer.WriteString("Unknown command\n")
-			writer.Flush()
+			respWriter.WriteString("Unknown command\n")
 		}
 	}
 }
 
-func scheduleMusic(csocket net.Conn, command string) {
-	toBeScheduled := strings.Split(command[10:], ",")
+func scheduleMusic(respWriter *bufio.Writer, command string) {
+	tmpList := strings.Split(command[10:], ",")
+	var toBeScheduled []string
+	for _, name := range tmpList {
+		toBeScheduled = append(toBeScheduled, filepath.Join(MusicTracks.Location, name))
+	}
 	commandChannel <- MusicCommandInfo{Command: Schedule, Data: toBeScheduled}
-	writer := bufio.NewWriter(csocket)
-	writer.WriteString("Musics are scheduled to play!")
-	writer.Flush()
+	respWriter.WriteString("Musics are scheduled to play!")
 }

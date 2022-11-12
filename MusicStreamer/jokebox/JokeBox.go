@@ -1,9 +1,9 @@
 package jokebox
 
-type JokeBoxStatus int
+type JokeBoxState int
 
 const (
-	Playing JokeBoxStatus = iota
+	Playing JokeBoxState = iota
 	Paused
 )
 

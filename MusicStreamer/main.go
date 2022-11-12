@@ -6,5 +6,6 @@ import (
 
 func main() {
 	//fmt.Printf("%v", MusicTracks.Tracks)
-	StartServer(HOST, PORT)
+	go StartServer(HOST, PORT)
+	StartHttpServer("0.0.0.0:8088")
 }
