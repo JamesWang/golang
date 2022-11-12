@@ -3,18 +3,24 @@ package jokebox
 import (
 	. "MusicStreamer/tracks"
 	"fmt"
+	"log"
 	"time"
 )
 
 var jokeBoxData JokeBoxData = JokeBoxData{
 	currentState:   Paused,
-	streamers:      nil,
+	streamers:      map[uint32]KeyChannelPair{},
 	playList:       nil,
 	positionInFile: 0,
 }
 
-func RegisterListener(musicChan chan []byte) {
-	jokeBoxData.streamers = append(jokeBoxData.streamers, musicChan)
+func RegisterListener(key uint32, musicChan chan []byte) {
+	log.Printf("Listener[%d] is joining", key)
+	jokeBoxData.streamers[key] = KeyChannelPair{id: key, channel: musicChan}
+}
+func UnRegisterListener(key uint32) {
+	log.Printf("Listener[%d] is leaving", key)
+	delete(jokeBoxData.streamers, key)
 }
 
 func HandleCommands() {

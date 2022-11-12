@@ -4,6 +4,7 @@ import (
 	. "MusicStreamer/tracks"
 	"bufio"
 	"fmt"
+	"log"
 	"net"
 	"path/filepath"
 	"strings"
@@ -52,12 +53,11 @@ func handleConnection(reqReader *bufio.Reader, respWriter *bufio.Writer) {
 }
 
 func handleCommand(respWriter *bufio.Writer, command string) {
-	fmt.Println("inside handleCommand")
+	log.Printf("Handling command[%s]...", command)
 	switch command {
 	case "/list":
 		commandChannel <- MusicCommandInfo{Command: List}
 		resp := <-cmdRespChannel
-		fmt.Printf("received music: %v", resp)
 		respWriter.WriteString(strings.Join(resp, "\n"))
 	case "/play":
 		commandChannel <- MusicCommandInfo{Command: Play}
@@ -78,6 +78,7 @@ func scheduleMusic(respWriter *bufio.Writer, command string) {
 	for _, name := range tmpList {
 		toBeScheduled = append(toBeScheduled, filepath.Join(MusicTracks.Location, name))
 	}
+	log.Printf("music [%v] are schedule to play", toBeScheduled)
 	commandChannel <- MusicCommandInfo{Command: Schedule, Data: toBeScheduled}
 	respWriter.WriteString("Musics are scheduled to play!")
 }

@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 //var chunkChannel = make(chan []byte)
@@ -16,10 +17,19 @@ type CurrentFile struct {
 	done   bool
 }
 
+func (cf CurrentFile) Base() string {
+	return filepath.Base(cf.file.Name())
+}
+
+type KeyChannelPair struct {
+	id      uint32
+	channel chan []byte
+}
+
 type JokeBoxData struct {
 	musicLocation    string
 	currentState     JokeBoxState
-	streamers        []chan []byte
+	streamers        map[uint32]KeyChannelPair
 	playList         []string
 	positionInFile   int64
 	currentMusicFile CurrentFile
@@ -44,12 +54,12 @@ func (jbd *JokeBoxData) StreamMusicChunk() {
 	if jbd.currentMusicFile.done || jbd.currentMusicFile.file == (os.File{}) {
 		jbd.playNextMusic()
 	}
-	buffer := make([]byte, 0, 4096)
+	buffer := make([]byte, 0, 4096*4)
 	count, err := jbd.currentMusicFile.reader.Read(buffer[:cap(buffer)])
 	buffer = buffer[:count]
 	if err != nil {
 		if err == io.EOF {
-			fmt.Printf("%s is done", jbd.currentMusicFile.file.Name())
+			fmt.Printf("%s is done", jbd.currentMusicFile.Base())
 			jbd.finished()
 		} else {
 			log.Fatalf("read music failed: %v", err)
@@ -75,13 +85,12 @@ func (jbd *JokeBoxData) playNextMusic() {
 }
 
 func (jbd *JokeBoxData) Broadcasting(buffer *[]byte) {
-	//buffer := <-chunkChannel
 	jbd.positionInFile += int64(len(*buffer))
 	if len(*buffer) == 0 {
 		jbd.finished()
 		return
 	}
-	for _, channel := range jbd.streamers {
-		channel <- *buffer
+	for _, keyChannel := range jbd.streamers {
+		keyChannel.channel <- *buffer
 	}
 }
