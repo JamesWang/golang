@@ -80,5 +80,5 @@ func scheduleMusic(respWriter *bufio.Writer, command string) {
 	}
 	log.Printf("music [%v] are schedule to play", toBeScheduled)
 	commandChannel <- MusicCommandInfo{Command: Schedule, Data: toBeScheduled}
-	respWriter.WriteString("Musics are scheduled to play!")
+	respWriter.WriteString("Musics are scheduled to play!\n")
 }

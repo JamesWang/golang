@@ -2,7 +2,6 @@ package jokebox
 
 import (
 	. "MusicStreamer/tracks"
-	"fmt"
 	"log"
 	"time"
 )
@@ -27,7 +26,7 @@ func HandleCommands() {
 	for {
 		select {
 		case commandInfo := <-commandChannel:
-			fmt.Printf("handling commands: %v", commandInfo)
+			log.Printf("handling commands: %v", commandInfo)
 			switch commandInfo.Command {
 			case List:
 				listMusics()
@@ -37,19 +36,21 @@ func HandleCommands() {
 				jokeBoxData.currentState = Paused
 			case Schedule:
 				jokeBoxData.playList = append(jokeBoxData.playList, commandInfo.Data...)
+				if jokeBoxData.currentState == Paused {
+					jokeBoxData.currentState = Playing
+				}
 			}
 		}
 	}
 }
 
 func listMusics() {
-	fmt.Printf("list music:%v", MusicTracks.Tracks)
 	cmdRespChannel <- MusicTracks.Tracks
 }
 
 func init() {
 	go func() {
-		for _ = range time.Tick(200 * time.Millisecond) {
+		for range time.Tick(200 * time.Millisecond) {
 			jokeBoxData.StreamMusicChunk()
 		}
 	}()
