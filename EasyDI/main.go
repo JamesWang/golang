@@ -4,12 +4,15 @@ import (
 	. "EasyDI/domain"
 	. "EasyDI/ds"
 	. "EasyDI/log"
+	"fmt"
 
 	//. "EasyDI/pdf"
 	//. "EasyDI/reg"
 	//. "EasyDI/read"
-	. "EasyDI/gor"
+	//. "EasyDI/gor"
 	//. "EasyDI/http"
+	//. "EasyDI/rw"
+	. "EasyDI/algo"
 	"net/http"
 )
 
@@ -35,5 +38,10 @@ func main() {
 	//		fmt.Println(m)
 	//}
 	//DoWait()
-	DoMutex()
+	//DoMutex()
+	//DoRWMutex()
+	arr := []int{5, 2, 7, 3, 4, 8, 6}
+	//Insertion_Sort(arr)
+	Bubble_Sort(arr)
+	fmt.Println(arr)
 }
