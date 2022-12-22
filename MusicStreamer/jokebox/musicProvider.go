@@ -37,6 +37,7 @@ type JokeBoxData struct {
 
 func (jbd *JokeBoxData) finished() {
 	jbd.currentMusicFile.file.Close()
+	jbd.currentMusicFile.file = os.File{}
 	jbd.positionInFile = 0
 	jbd.currentMusicFile.done = true
 	jbd.playList = jbd.playList[1:]

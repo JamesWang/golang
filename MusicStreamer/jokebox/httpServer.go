@@ -12,14 +12,6 @@ type MusicHandler struct {
 
 var connectionCount count32
 
-func closeHandler(key uint32, writer http.ResponseWriter) {
-	select {
-	case closed := <-writer.(http.CloseNotifier).CloseNotify():
-		if closed {
-			UnRegisterListener(key)
-		}
-	}
-}
 func (sh MusicHandler) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "audio/mpeg")
 	writer.Header().Set("Connection", "Keep-Alive")
@@ -28,8 +20,7 @@ func (sh MusicHandler) ServeHTTP(writer http.ResponseWriter, request *http.Reque
 	id := connectionCount.GetAndInc()
 	var musicChannel = make(chan []byte)
 	go RegisterListener(id, musicChannel)
-	go closeHandler(id, writer)
-
+	log.Println("Start playing...")
 	for {
 		select {
 		case chunk := <-musicChannel:
@@ -38,6 +29,9 @@ func (sh MusicHandler) ServeHTTP(writer http.ResponseWriter, request *http.Reque
 			if ok {
 				flusher.Flush()
 			}
+		case <-request.Context().Done():
+			UnRegisterListener(id)
+			return
 		}
 	}
 }
