@@ -12,7 +12,8 @@ import (
 	//. "EasyDI/gor"
 	//. "EasyDI/http"
 	//. "EasyDI/rw"
-	. "EasyDI/algo"
+	//. "EasyDI/algo"
+	. "EasyDI/read"
 	"net/http"
 )
 
@@ -40,8 +41,9 @@ func main() {
 	//DoWait()
 	//DoMutex()
 	//DoRWMutex()
-	arr := []int{5, 2, 7, 3, 4, 8, 6}
+	//arr := []int{5, 2, 7, 3, 4, 8, 6}
 	//Insertion_Sort(arr)
-	Bubble_Sort(arr)
-	fmt.Println(arr)
+	//Bubble_Sort(arr)
+	//fmt.Println(arr)
+	fmt.Printf("config=%v\n", Config)
 }
