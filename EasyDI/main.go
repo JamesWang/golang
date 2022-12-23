@@ -2,9 +2,9 @@ package main
 
 import (
 	. "EasyDI/domain"
-	. "EasyDI/ds"
+
 	. "EasyDI/log"
-	"fmt"
+	. "EasyDI/write"
 
 	//. "EasyDI/pdf"
 	//. "EasyDI/reg"
@@ -13,7 +13,8 @@ import (
 	//. "EasyDI/http"
 	//. "EasyDI/rw"
 	//. "EasyDI/algo"
-	. "EasyDI/read"
+	//. "EasyDI/read"
+	. "EasyDI/ds"
 	"net/http"
 )
 
@@ -45,5 +46,7 @@ func main() {
 	//Insertion_Sort(arr)
 	//Bubble_Sort(arr)
 	//fmt.Println(arr)
-	fmt.Printf("config=%v\n", Config)
+	//fmt.Printf("config=%v\n", Config)
+	//WriteData()
+	WriteJson()
 }
