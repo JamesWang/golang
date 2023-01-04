@@ -3,8 +3,9 @@ package main
 import (
 	"net/http"
 	//. "requestRouting/uuid"
-	. "requestRouting/middlew"
+	//. "requestRouting/middlew"
 	. "requestRouting/route"
+	. "requestRouting/rpc"
 
 	"github.com/julienschmidt/httprouter"
 )
@@ -21,5 +22,6 @@ func main() {
 	//mux := NewSrvMux()
 	//http.ListenAndServe(":8080", mux)
 	//GorillaSrv()
-	MMain()
+	//MMain()
+	TimeServerActivate()
 }

@@ -3,6 +3,8 @@ package middlew
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/justinas/alice"
 )
 
 func Generator() func() int {
@@ -29,5 +31,10 @@ func HandleIt(w http.ResponseWriter, r *http.Request) {
 func MMain() {
 	origHandler := http.HandlerFunc(HandleIt)
 	http.Handle("/", MiddleWare(origHandler))
+
+	pHandler := http.HandlerFunc(CityPostHandler)
+	chain := alice.New(FilterContentType, SetServerTimeCookie).Then(pHandler)
+	http.Handle("/city", chain)
+
 	http.ListenAndServe(":8080", nil)
 }

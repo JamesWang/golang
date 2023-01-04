@@ -2,6 +2,7 @@ package main
 
 import (
 	context "context"
+	. "grpcClient/client2"
 	pb "grpcClient/datafiles"
 	"io"
 	"log"
@@ -30,7 +31,7 @@ func ReceiveStream(client pb.MoneyTransactionClient, request *pb.TransactionRequ
 		log.Printf("Status: %v, Operation: %v", response.Status, response.Description)
 	}
 }
-func main() {
+func main1() {
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Fatal("Did not connect: %v", err)
@@ -43,4 +44,8 @@ func main() {
 	amount := float32(1250.75)
 
 	ReceiveStream(client, &pb.TransactionRequest{From: from, To: to, Amount: amount})
+}
+
+func main() {
+	RPCClient()
 }
