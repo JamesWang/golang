@@ -3,10 +3,11 @@ package main
 import (
 	"net/http"
 	//. "requestRouting/uuid"
-	//. "requestRouting/middlew"
+	. "requestRouting/middlew"
 	. "requestRouting/route"
-	. "requestRouting/rpc"
 
+	//. "requestRouting/rpc"
+	//. "requestRouting/tests"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -23,5 +24,8 @@ func main() {
 	//http.ListenAndServe(":8080", mux)
 	//GorillaSrv()
 	//MMain()
-	TimeServerActivate()
+	//TimeServerActivate()
+	//RunSortAndTotal()
+	//EmickleiRestfulService()
+	GinJson()
 }
