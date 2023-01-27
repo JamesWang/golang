@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 	"requestRouting/data"
+
+	"gopkg.in/yaml.v3"
 )
 
 func (app *Application) HealthcheckHandler(w http.ResponseWriter, r *http.Request) {
@@ -39,6 +41,30 @@ func (app *Application) WriteJson(w http.ResponseWriter, status int, data any, h
 	w.WriteHeader(status)
 	w.Write(js)
 	return nil
+}
+
+func (app *Application) WriteYaml(w http.ResponseWriter, status int, data any, headers http.Header) error {
+	yml, err := yaml.Marshal(data)
+	if err != nil {
+		return err
+	}
+	yml = append(yml, '\n')
+	for key, value := range headers {
+		w.Header()[key] = value
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+	w.Write(yml)
+	return nil
+}
+
+func (app *Application) ShowMovieYamlHandler(w http.ResponseWriter, r *http.Request) {
+	movie := data.SampleData(1)
+	err := app.WriteYaml(w, http.StatusOK, movie, nil)
+	if err != nil {
+		app.Logger.Print(err)
+		http.Error(w, "The server encountered a problem and could not process your requests", http.StatusInternalServerError)
+	}
 }
 
 func (app *Application) ShowMovieHandler(w http.ResponseWriter, r *http.Request) {
