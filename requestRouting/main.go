@@ -40,7 +40,8 @@ func MainFunc() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/v1/healthcheck", app.HealthcheckHandler)
-	mux.HandleFunc("/v1/movies", app.ShowMovieHandler)
+	mux.HandleFunc("/v1/movies/json", app.ShowMovieHandler)
+	mux.HandleFunc("/v1/movies/yml", app.ShowMovieYamlHandler)
 
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%d", cfg.Port),
