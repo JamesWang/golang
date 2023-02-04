@@ -15,6 +15,7 @@ import (
 	//. "EasyDI/algo"
 	//. "EasyDI/read"
 	. "EasyDI/ds"
+	. "EasyDI/mgo3/p1"
 	"fmt"
 	"net/http"
 	"os"
@@ -80,7 +81,7 @@ func show_datetime(format DateFormat, dateString string) {
 		}
 	}
 }
-func main() {
+func main3() {
 	start := time.Now()
 	if len(os.Args) != 2 {
 		fmt.Println("Usage: dates parse_string")
@@ -101,4 +102,13 @@ func main() {
 
 	duration := time.Since(start)
 	fmt.Println("Execution time:", duration)
+}
+
+func main() {
+	aSlice := []int{0, 1, 2, 3, 4, 5, 6, 7, 8}
+
+	DoDeleteSlice(aSlice, os.Args[1:], Method_1)
+
+	aSlice = []int{0, 1, 2, 3, 4, 5, 6, 7, 8}
+	DoDeleteSlice(aSlice, os.Args[1:], Method_2)
 }
