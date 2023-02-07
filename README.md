@@ -21,3 +21,6 @@
   - register the server
   
             pb.RegisterMoneyTransactionServer(s, &server{})
+##Two methods of deleting an item from a slice
+
+![image](https://user-images.githubusercontent.com/324429/216785926-45f43881-8f89-4f6c-94d3-dc7b7d9a0aad.png)
